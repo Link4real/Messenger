@@ -1,4 +1,6 @@
 use crate::schema::*;
+use serde::Serialize;
+use serde::Deserialize;
 
 #[derive(Insertable)]
 #[table_name = "users"]
@@ -25,7 +27,7 @@ pub struct Message {
     pub stamp: chrono::NaiveDateTime,
 }
 
-#[derive(Insertable)]
+#[derive(Insertable, Serialize, Deserialize)]
 #[table_name = "messages"]
 pub struct NewMessage<'a> {
     pub author: &'a str,

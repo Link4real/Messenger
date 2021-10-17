@@ -39,22 +39,23 @@ async fn main() {
     // Test route, get your user ID of your JWT token
     let user_route = warp::path!("user").and(with_auth()).and_then(user_handler);
 
-    let chat_route = warp::path("chat")
-        // The `ws()` filter will prepare the Websocket handshake.
-        .and(warp::ws())
-        .map(|ws: warp::ws::Ws| {
-            // And then our closure will be called when it completes...
-            ws.on_upgrade(|websocket| {
-                
-                // Just echo all messages back...
-                let (tx, rx) = websocket.split();
-                rx.forward(tx).map(|result| {
-                    if let Err(e) = result {
-                        eprintln!("websocket error: {:?}", e);
-                    }
+    let chat_route =
+        warp::path("chat")
+            .and(with_auth())
+            .and(warp::ws())
+            .map(| uid: String, ws: warp::ws::Ws| {
+                // And then our closure will be called when it completes...
+                ws.on_upgrade(move |websocket| {
+                    println!("new websocket connection from user with ID {}", uid);
+                    // Just echo all messages back...
+                    let (tx, rx) = websocket.split();
+                    rx.forward(tx).map(|result| {
+                        if let Err(e) = result {
+                            eprintln!("websocket error: {:?}", e);
+                        }
+                    })
                 })
-            })
-        });
+            });
 
     let routes = login_route
         .or(chat_route)
