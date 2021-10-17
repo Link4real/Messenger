@@ -15,7 +15,7 @@ pub struct LoginResponse {
 }
 
 const BEARER: &str = "Bearer ";
-const JWT_SECRET: &[u8] = b"secret";
+const JWT_SECRET: &[u8] = b"c09f90490c01e95768138bba2b736dbefacfaa05fb42c3a422419bf8d2ec84a687cf73e9f03518c935946d2c18054d1dad3301bc319cea8ae018253906b128d9";
 
 use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation};
 use warp::http::HeaderValue;
