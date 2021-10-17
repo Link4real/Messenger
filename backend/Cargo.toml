@@ -5,6 +5,18 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[lib]
+name = "backlib"
+path = "src/lib.rs"
+
+[[bin]]
+name = "backend"
+path = "src/main.rs"
+
+[[bin]]
+name = "newuser"
+path = "src/bin/new_user.rs"
+
 [dependencies]
 diesel = { version = "1.4.8", features = ["postgres"] }
 tokio = { version = "1", features = ["full"] }
