@@ -1,33 +1,68 @@
-use std::collections::HashMap;
-
+use backlib::auth;
+use backlib::auth::LoginRequest;
+use backlib::auth::LoginResponse;
+use backlib::error;
+use backlib::error::Error::WrongCredentialsError;
 use backlib::establish_connection;
 use backlib::models::User;
 use backlib::schema::users::dsl::*;
+use backlib::WebResult;
+use diesel::ExpressionMethods;
+use diesel::QueryDsl;
 use diesel::RunQueryDsl;
+use sha256::digest;
+use warp::reject;
+use warp::reply;
 use warp::Filter;
+use warp::Reply;
+
+use warp::{
+    filters::header::headers_cloned,
+    http::header::{HeaderMap, HeaderValue},
+    Rejection,
+};
+
+pub fn with_auth() -> impl Filter<Extract = (String,), Error = Rejection> + Clone {
+    headers_cloned()
+        .map(move |headers: HeaderMap<HeaderValue>| (headers))
+        .and_then(backlib::auth::authorize)
+}
 
 #[tokio::main]
 async fn main() {
-    let get_users = warp::get()
-        .and(warp::path("api"))
-        .and(warp::path("users"))
-        .and(warp::path::end())
-        .and_then(get_users);
+    let login_route = warp::path!("login")
+        .and(warp::post())
+        .and(warp::body::json())
+        .and_then(login_handler);
 
-    warp::serve(get_users).run(([127, 0, 0, 1], 3030)).await;
+    let user_route = warp::path!("user").and(with_auth()).and_then(user_handler);
+
+    let routes = login_route.or(user_route).recover(error::handle_rejection);
+
+    warp::serve(routes).run(([127, 0, 0, 1], 3030)).await;
 }
 
-async fn get_users() -> Result<impl warp::Reply, warp::Rejection> {
-    let mut result = HashMap::new();
-
+async fn login_handler(body: LoginRequest) -> WebResult<impl Reply> {
     let connection = establish_connection();
-    let results = users
+    let user = users
+        .filter(email.eq(&body.email))
+        .limit(1)
         .load::<User>(&connection)
-        .expect("Error loading posts");
+        .unwrap();
 
-    for user in results {
-        result.insert(user.email, user.username);
+    if user.is_empty() {
+        return Err(reject::custom(WrongCredentialsError));
+    } else {
+        let user = user.get(0).unwrap();
+        if user.email == body.email && user.pwhash == digest(body.pw) {
+            let token = auth::create_jwt(&user.id.to_string()).map_err(|e| reject::custom(e))?;
+            return Ok(reply::json(&LoginResponse { token }));
+        } else {
+            return Err(reject::custom(WrongCredentialsError));
+        }
     }
+}
 
-    Ok(warp::reply::json(&result))
+pub async fn user_handler(uid: String) -> WebResult<impl Reply> {
+    Ok(format!("Hello User {}", uid))
 }

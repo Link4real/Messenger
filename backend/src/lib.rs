@@ -1,7 +1,8 @@
 #[macro_use]
 extern crate diesel;
 extern crate dotenv;
-
+pub mod auth;
+pub mod error;
 pub mod models;
 pub mod schema;
 use crate::models::User;
@@ -10,6 +11,10 @@ use diesel::prelude::*;
 use dotenv::dotenv;
 use sha256::digest;
 use std::env;
+use warp::Rejection;
+
+pub type Result<T> = std::result::Result<T, error::Error>;
+pub type WebResult<T> = std::result::Result<T, Rejection>;
 
 pub fn establish_connection() -> PgConnection {
     dotenv().ok();
