@@ -1,7 +1,7 @@
 use backlib::establish_connection;
 use backlib::models::User;
 use backlib::schema::users::dsl::*;
-use diesel::{QueryDsl, RunQueryDsl};
+use diesel::{RunQueryDsl};
 
 #[tokio::main]
 async fn main() {
