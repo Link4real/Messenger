@@ -1,5 +1,3 @@
-import firebase from "firebase";
-
 const FieldValue = firebase.firestore.FieldValue;
 
 export const init = () => {
