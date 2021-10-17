@@ -39,7 +39,7 @@ async fn main() {
     // Test route, get your user ID of your JWT token
     let user_route = warp::path!("user").and(with_auth()).and_then(user_handler);
 
-    let echo_route = warp::path("echo")
+    let chat_route = warp::path("chat")
         // The `ws()` filter will prepare the Websocket handshake.
         .and(warp::ws())
         .map(|ws: warp::ws::Ws| {
