@@ -56,7 +56,7 @@ async fn main() {
         });
 
     let routes = login_route
-        .or(echo_route)
+        .or(chat_route)
         .or(user_route)
         .recover(error::handle_rejection);
 
