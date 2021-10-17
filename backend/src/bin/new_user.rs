@@ -1,7 +1,6 @@
 extern crate diesel;
 
 use backlib::*;
-use std::io::{stdin, Read};
 
 fn main() {
     let connection = establish_connection();
