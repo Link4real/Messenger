@@ -3,6 +3,7 @@ table! {
         id -> Int4,
         author -> Varchar,
         body -> Text,
+        stamp -> Nullable<Timestamp>,
     }
 }
 

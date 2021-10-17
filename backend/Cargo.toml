@@ -17,7 +17,7 @@ name = "newuser"
 path = "src/bin/new_user.rs"
 
 [dependencies]
-diesel = { version = "1.4.8", features = ["postgres"] }
+diesel = { version = "1.4.8", features = ["postgres", "chrono"] }
 tokio = { version = "1", features = ["full"] }
 warp = "0.3.1"
 dotenv = "0.15.0"

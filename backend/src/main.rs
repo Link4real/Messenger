@@ -45,6 +45,7 @@ async fn main() {
         .map(|ws: warp::ws::Ws| {
             // And then our closure will be called when it completes...
             ws.on_upgrade(|websocket| {
+                
                 // Just echo all messages back...
                 let (tx, rx) = websocket.split();
                 rx.forward(tx).map(|result| {

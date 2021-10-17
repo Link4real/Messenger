@@ -1,4 +1,4 @@
-use crate::schema::users;
+use crate::schema::*;
 
 #[derive(Insertable)]
 #[table_name = "users"]
@@ -14,4 +14,21 @@ pub struct User {
     pub email: String,
     pub username: String,
     pub pwhash: String,
+}
+
+#[derive(Queryable)]
+
+pub struct Message {
+    pub id: i32,
+    pub author: String,
+    pub body: String,
+    pub stamp: chrono::NaiveDateTime,
+}
+
+#[derive(Insertable)]
+#[table_name = "messages"]
+pub struct NewMessage<'a> {
+    pub author: &'a str,
+    pub body: &'a str,
+    pub stamp: &'a chrono::NaiveDateTime,
 }
