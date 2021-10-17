@@ -7,7 +7,6 @@ use diesel::{QueryDsl, RunQueryDsl};
 async fn main() {
     let connection = establish_connection();
     let results = users
-        .limit(5)
         .load::<User>(&connection)
         .expect("Error loading posts");
 
