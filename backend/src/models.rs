@@ -27,7 +27,7 @@ pub struct Message {
     pub stamp: chrono::NaiveDateTime,
 }
 
-#[derive(Insertable, Serialize, Deserialize)]
+#[derive(Insertable, Serialize)]
 #[table_name = "messages"]
 pub struct NewMessage<'a> {
     pub author: &'a str,
