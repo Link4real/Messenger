@@ -1,5 +1,5 @@
 # Messenger
-A simple encrypted instant-messenger solution. Will suppor:
+A simple encrypted instant-messenger solution. Will support:
 * Images
 * General Files
 * Text messenges
